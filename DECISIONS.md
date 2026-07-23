@@ -92,6 +92,73 @@ Hosting platforms inject `PORT` and expect the process to bind to it. Naming it 
 
 ---
 
+## Step 2 — Database · 2026-07-23
+
+### CMS lives in a dedicated `renewcred` schema, not `public`
+
+Supabase's free tier allows two projects and both were already in use, so this project shares a Supabase instance with an unrelated live application (23 tables, real data). Rather than accept the risk or demand a paid upgrade, the CMS is scoped to its own Postgres schema via `?schema=renewcred` on both connection URLs.
+
+**What this buys:** Prisma manages only that schema. Drift detection ignores `public`, so `migrate dev` never proposes resetting the co-tenant's tables. `migrate reset` drops only `renewcred`. The RLS `REVOKE` in `rls.sql` is schema-scoped, so it cannot break the other application's Data API.
+
+**Why it mattered:** without isolation, three separate routine operations were each independently destructive — `migrate dev` would see 23 unknown tables as drift and offer a reset; `REVOKE ALL ON SCHEMA public FROM anon, authenticated` would break the live app instantly with no reset involved; and `db:reset` is a normal part of the workflow.
+
+**Trade accepted:** one extra connection parameter, and `search_path` matters for any raw SQL. Cheap relative to a shared-database accident.
+
+**Interview framing:** _"I had to share a Supabase project with a live app. Rather than treat that as a constraint to work around carefully, I made it structurally safe — a dedicated Postgres schema means the destructive operations physically cannot reach the co-tenant. Isolation beats discipline; discipline fails once."_
+
+### RLS uses FORCE, not just ENABLE
+
+`ENABLE ROW LEVEL SECURITY` alone leaves the table owner exempt. Local testing then passes while the protection does nothing, which is worse than no protection because it produces false confidence. `FORCE` closes it. `ALTER DEFAULT PRIVILEGES` also covers tables created by future migrations, so a new table is never exposed in the window between its migration and the next RLS pass.
+
+### One `.env` at the repo root, loaded via `dotenv-cli`
+
+Prisma resolves `.env` relative to its working directory, which is `apps/api` for a workspace script — so a root `.env` was invisible to it. Options were a second `.env` per workspace or pointing Prisma at the root one. Chose the latter: the reviewer's setup stays a single `cp env.example .env`, and there is one place where a secret can be wrong.
+
+---
+
+### Connection URLs must be percent-encoded — the `P1001` that was not an outage
+
+The configured password contained a literal `@`. A URI parser splits userinfo at a delimiter, so the driver read the host as everything after the _first_ `@`, resolved a hostname that does not exist, and reported `P1001: Can't reach database server`.
+
+**Why it cost time:** `P1001` reads as "the server is down." It was verified not to be — DNS resolved, TCP to both pooler ports was open, and the Supabase control plane reported `ACTIVE_HEALTHY`. The error names the wrong layer, and every instinct it triggers (is the project paused? is the region right? is there a firewall?) investigates the wrong thing.
+
+**How it was isolated:** a raw Postgres wire-protocol probe — `SSLRequest`, then `StartupMessage` — against each port, reading the server's own response instead of the driver's collapsed error.
+
+**Interview framing:** _"The error said the database was unreachable. The database was fine — the connection string was unparseable, so the driver never dialled the right host. I stopped trusting the ORM's error class and spoke the Postgres wire protocol directly, which named the real layer in one step. Percent-encoding is now documented in `env.example` rather than left as folklore."_
+
+### Migrations applied via the control plane when the session pooler is unreachable
+
+`prisma migrate dev` requires `directUrl` — a **session**-mode connection, because migrations need advisory locks and a shadow database that transaction pooling cannot carry. On this network the session pooler (`:5432`) accepts TCP but never completes the Postgres handshake, and the direct host publishes only an `AAAA` record with no IPv6 route available. The transaction pooler (`:6543`) works.
+
+So Prisma had no usable migration endpoint, while the application connection was healthy.
+
+**Resolution — split generation from application:**
+
+1. `prisma migrate diff --from-empty --to-schema-datamodel` generates the migration **offline**, no database required.
+2. The committed `migrations/20260723000000_init/migration.sql` is ordinary unqualified Prisma output, so `migrate deploy` works normally on any network with session access.
+3. That SQL was applied through the Supabase control plane, wrapped in `CREATE SCHEMA IF NOT EXISTS renewcred; SET search_path TO renewcred;` — the wrapper is deliberately _not_ in the committed file, because Prisma derives the schema from `?schema=` in the URL and a hard-coded `SET` would make the migration non-portable.
+4. `_prisma_migrations` was written with the real SHA-256 of the migration file, so Prisma's ledger matches the database rather than drifting from it.
+
+**Trade accepted:** one migration was applied by a path that CI will not use. Mitigated by the checksum being computed from the committed file — if the file is edited, Prisma reports the mismatch instead of silently diverging.
+
+**Interview framing:** _"Prisma's migration engine needs a session connection I did not have, but the migration itself is just SQL. I generated it offline, applied it out-of-band scoped to the right schema, and wrote the checksum ledger so the tooling's view of the world still matched the database. The committed artifact stays portable — the workaround lives in the runbook, not in the migration."_
+
+### Schema isolation verified by assertion, not by inspection
+
+Applying DDL through the control plane defaults to `search_path = public` — the co-tenant's schema. Table counts were captured before and after every DDL step: `public` held 23 tables throughout and `renewcred` went 0 → 8 → 9 (`_prisma_migrations`).
+
+The RLS backstop was checked the same way, by asserting rather than reading: `SET LOCAL ROLE anon`, attempt a read, and raise if it **succeeds**. A test that fails when protection is absent is worth more than one confirming a `pg_class` flag is set.
+
+### `tsx` for the seed — `--experimental-strip-types` cannot resolve `.js` specifiers
+
+The seed ran under neither of its two documented paths. Type-stripping does not map TypeScript's mandatory `.js` import specifiers back to `.ts`, and the compiled output could not run either because the generated Prisma client is `tsc`-excluded and so never reaches `dist/`.
+
+`tsx` is Prisma's documented runner for ESM TypeScript seeds and resolves both. Also fixed: `bcryptjs@2.4.3` is CommonJS, so ESM cannot statically detect its named exports — the default import is destructured at runtime.
+
+**Note:** the seed is idempotent by construction and was verified as such — run twice, identical counts (1 user · 4 standards · 5 versions · 19 navigation items · 10 settings).
+
+---
+
 ## Pending
 
 - **B12** — custom auth vs Supabase Auth ([ADR-0005](docs/adr/0005-custom-auth-over-supabase-auth.md)). Reversible until roadmap step 6.

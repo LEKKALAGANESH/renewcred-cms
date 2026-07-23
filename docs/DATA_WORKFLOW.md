@@ -24,6 +24,58 @@ Defined in `apps/api/package.json`, surfaced at the root so a reviewer never nee
 - Never hand-edit an applied migration. Write a new one.
 - `db:reset` is local-only. It exists so a reviewer can always get back to a known-good state in one command.
 
+## Fallback — applying a migration when the session pooler is unreachable
+
+`migrate dev` and `migrate:deploy` both need `DIRECT_URL`, a session-mode connection. Some networks accept TCP on port 5432 but never complete the Postgres handshake, and Supabase's direct host (`db.<ref>.supabase.co`) publishes only an `AAAA` record — unusable without an IPv6 route. The transaction pooler on 6543 is unaffected, so the app runs and seeds fine while Prisma's migration engine has no endpoint.
+
+**Diagnose first — do not assume the project is paused.** `P1001` covers every failure from a bad hostname to a refused handshake:
+
+```bash
+# 1. Is the tenant actually reachable? A healthy pooler answers 'S' to SSLRequest
+#    and then sends an AuthenticationRequest.
+node scripts/pg-probe.mjs <pooler-host> 6543 postgres.<ref> postgres
+
+# 2. If 6543 answers and 5432 times out, it is the network, not the database.
+```
+
+A `P1001` on **both** ports usually means the URL is unparseable — check that the password is percent-encoded before suspecting the server.
+
+**Then split generation from application:**
+
+```bash
+# Generate the migration offline — no database connection required.
+npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script \
+  > prisma/migrations/<timestamp>_<name>/migration.sql
+```
+
+Apply that SQL through the Supabase control plane (dashboard SQL editor or MCP), wrapped so it cannot land in `public`:
+
+```sql
+CREATE SCHEMA IF NOT EXISTS "renewcred";
+SET search_path TO "renewcred";
+-- …contents of migration.sql…
+```
+
+The wrapper is **never** committed into `migration.sql`. Prisma derives the schema from `?schema=` in the connection URL; hard-coding `SET search_path` would make the migration non-portable and silently override that.
+
+Finally, record it in Prisma's ledger so `migrate status` reflects reality:
+
+```sql
+INSERT INTO "renewcred"."_prisma_migrations"
+  (id, checksum, finished_at, migration_name, started_at, applied_steps_count)
+VALUES (gen_random_uuid()::text, '<sha256-of-migration.sql>', now(), '<migration_name>', now(), 1);
+```
+
+The checksum is the SHA-256 of the committed file. Computing it from the file rather than inventing one means a later edit surfaces as a Prisma checksum mismatch instead of silent drift.
+
+**Verify isolation after every out-of-band DDL step** — the control plane defaults to `search_path = public`:
+
+```sql
+SELECT table_schema, count(*) FROM information_schema.tables
+WHERE table_schema IN ('renewcred','public') AND table_type='BASE TABLE'
+GROUP BY table_schema;
+```
+
 ## RLS in migrations
 
 Every table gets RLS in the same migration that creates it — never a follow-up. A table that exists for one migration without RLS is a table that shipped without RLS.

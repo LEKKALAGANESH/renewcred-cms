@@ -1,8 +1,17 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/env" },
-    { "path": "./packages/logger" },
-    { "path": "./packages/schema" }
+    {
+      "path": "./packages/env"
+    },
+    {
+      "path": "./packages/logger"
+    },
+    {
+      "path": "./packages/schema"
+    },
+    {
+      "path": "./apps/api"
+    }
   ]
 }

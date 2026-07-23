@@ -1,0 +1,210 @@
+// Derived from the locked content model in @renewcred/schema, not the reverse.
+// Terms match docs/DOMAIN_VOCABULARY.md exactly.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Both URLs carry ?schema=renewcred. The Supabase project is shared with an
+  // unrelated live application whose tables live in `public`; scoping to a
+  // dedicated schema means Prisma's drift detection, `migrate reset`, and the
+  // RLS grants in rls.sql cannot reach anything outside this app. See ADR-0004.
+  //
+  // DATABASE_URL: Supavisor TRANSACTION pooler, port 6543, pgbouncer=true.
+  url = env("DATABASE_URL")
+  // DIRECT_URL: SESSION connection, port 5432. Migrations need session-level
+  // features the transaction pooler cannot carry; without this they hang.
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Identity ────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(EDITOR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions  Session[]
+  versions  StandardVersion[] @relation("authoredVersions")
+  revisions Revision[]        @relation("authoredRevisions")
+
+  @@map("users")
+}
+
+/// One refresh-token family. Rotated on every use; a replayed token means
+/// theft, so the whole family is revoked. Tokens are stored HASHED — a
+/// database leak must not yield usable credentials.
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String    @unique
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  /// Set when revocation was triggered by detecting a replayed token, so the
+  /// security event survives in the record rather than only in logs.
+  revokedReason    String?
+  userAgent        String?
+  ipHash           String?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ─── Content ─────────────────────────────────────────────────────────────
+
+model Standard {
+  id             String  @id @default(uuid()) @db.Uuid
+  slug           String  @unique
+  title          String
+  /// Card summary on the index page (region L-04c).
+  summary        String
+  /// Hero description on the detail page (region D-03).
+  description    String
+  iconAssetId    String? @db.Uuid
+  /// Index-page ordering. Explicit here — unlike sections, these are separate
+  /// rows with no inherent array order to derive position from.
+  position       Int
+  seoTitle       String?
+  seoDescription String?
+
+  versions  StandardVersion[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([position])
+  @@map("standards")
+}
+
+enum VersionStatus {
+  DRAFT
+  CONSULTATION
+  CERTIFIED
+  ARCHIVED
+}
+
+/// One dated, status-bearing revision of a Standard. Readers select between
+/// these (region D-05); each carries its own content and dates.
+model StandardVersion {
+  id         String        @id @default(uuid()) @db.Uuid
+  standardId String        @db.Uuid
+  standard   Standard      @relation(fields: [standardId], references: [id], onDelete: Cascade)
+  version    String
+  status     VersionStatus @default(DRAFT)
+
+  /// A ContentDocument: { schemaVersion, sections }. Validated by
+  /// parseDocument() at the API boundary before it ever reaches this column —
+  /// jsonb guarantees shape, not meaning.
+  content Json
+
+  /// Denormalised plain text for search (region D-04). Rebuilt on every write
+  /// by documentToPlainText(); never edited directly.
+  searchText String @default("")
+
+  certifiedAt       DateTime?
+  consultationStart DateTime?
+  consultationEnd   DateTime?
+  consultationUrl   String?
+  feedbackUrl       String?
+  feedbackSummary   String?
+  publishedAt       DateTime?
+
+  authorId String @db.Uuid
+  author   User   @relation("authoredVersions", fields: [authorId], references: [id])
+
+  revisions Revision[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([standardId, version])
+  @@index([standardId, status])
+  @@index([status, publishedAt])
+  @@map("standard_versions")
+}
+
+/// Append-only history, written on every publish. Never updated, never deleted
+/// while its version exists.
+model Revision {
+  id        String          @id @default(uuid()) @db.Uuid
+  versionId String          @db.Uuid
+  version   StandardVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  content   Json
+  note      String?
+  authorId  String          @db.Uuid
+  author    User            @relation("authoredRevisions", fields: [authorId], references: [id])
+  createdAt DateTime        @default(now())
+
+  @@index([versionId, createdAt])
+  @@map("revisions")
+}
+
+// ─── Site chrome ─────────────────────────────────────────────────────────
+
+enum MenuKey {
+  HEADER
+  FOOTER_PRIMARY
+  FOOTER_LEGAL
+}
+
+/// Navigation is content, not routing config. A hardcoded nav bar is the most
+/// visible way to fail the brief's "all content through your APIs".
+/// Self-referencing for the header dropdowns (region G-02).
+model NavigationItem {
+  id       String  @id @default(uuid()) @db.Uuid
+  menu     MenuKey
+  label    String
+  href     String
+  position Int
+  parentId String? @db.Uuid
+
+  parent   NavigationItem?  @relation("navTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children NavigationItem[] @relation("navTree")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([menu, position])
+  @@index([parentId])
+  @@map("navigation_items")
+}
+
+model Asset {
+  id         String   @id @default(uuid()) @db.Uuid
+  filename   String
+  mimeType   String
+  byteSize   Int
+  width      Int?
+  height     Int?
+  /// Required. Alt text that is optional in the model is alt text that is
+  /// missing in production.
+  alt        String
+  /// Object path in the private Supabase Storage bucket.
+  storageKey String   @unique
+  createdAt  DateTime @default(now())
+
+  @@map("assets")
+}
+
+/// Singleton key/value for global chrome — address, tagline, CIN, copyright
+/// (regions G-05 through G-11).
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
