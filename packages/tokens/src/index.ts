@@ -1,6 +1,7 @@
 export {
   border,
   color,
+  controlHeight,
   effect,
   layout,
   radius,

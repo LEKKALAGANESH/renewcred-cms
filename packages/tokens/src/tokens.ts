@@ -121,6 +121,25 @@ export const radius = {
 /** Top-rounded panel: [topLeft, topRight, bottomRight, bottomLeft]. */
 export const radiusPanelTop = [80, 80, 0, 0] as const;
 
+/**
+ * Control heights, measured from the Figma frames.
+ *
+ * These are deliberately **not** spacing steps. The extraction counted
+ * auto-layout gaps and padding, so element heights never entered the spacing
+ * scale — which means `h-48` does not exist and a primary button styled with it
+ * silently collapses to its content height. Naming the control sizes separately
+ * keeps the spacing scale honest and makes the three real control shapes
+ * explicit.
+ */
+export const controlHeight = {
+  /** outline button, icon button — 40×40 for the icon variant */
+  sm: 40,
+  /** primary button */
+  md: 48,
+  /** search field, newsletter field */
+  lg: 56,
+} as const;
+
 export const border = {
   /** 955 occurrences — effectively the default stroke */
   hairline: 1,

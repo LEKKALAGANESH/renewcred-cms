@@ -191,6 +191,48 @@ The extract recorded shadow _geometry_ only — radius and offset, no colour. Th
 
 ---
 
+## Step 4 — Design system foundation · 2026-07-23
+
+### A CSS-compilation test, because the token override creates a silent failure mode
+
+Replacing Tailwind's scales means an off-token class is **not an error** — it is a class that generates no CSS. `h-48` type-checks, renders, and satisfies every DOM assertion while doing nothing at all.
+
+Three such defects existed in the first Button implementation, and no existing test could see any of them:
+
+| Class        | Why it emitted nothing                                         | Visible effect                  |
+| ------------ | -------------------------------------------------------------- | ------------------------------- |
+| `h-48`       | 48 is not a spacing step — the extract counted gaps, not sizes | button collapses to text height |
+| `ring-brand` | the palette is nested; the real name is `ring-brand-primary`   | **no focus ring at all**        |
+| `border-2`   | `borderWidth` is replaced by the extracted `{1, 1.5}`          | spinner has no visible ring     |
+
+`styles.test.ts` compiles the CSS with PostCSS and asserts that every class the components use produces a rule. It also asserts the guard itself still detects `h-48`, `bg-blue-500`, and `p-7` — a guard that silently stops guarding is worse than none.
+
+**Interview framing:** _"Overriding Tailwind's theme converts off-token values from a review comment into a build error — but only for values that don't exist. A class that merely generates no CSS still passes typecheck, tests, and review; the focus ring was missing entirely and nothing failed. So I compile the CSS in a test and require every class to produce a rule. It found three defects on the first run, one of them an accessibility regression."_
+
+### Control heights are not spacing steps
+
+The extraction counted auto-layout gaps and padding, so element _heights_ never entered the spacing scale — which is why `h-48` did not exist. Added as a separate `controlHeight` scale (40 / 48 / 56, the three control sizes in the design) rather than widening `spacing`, because putting 48 in the spacing scale would also sanction `p-48` and `gap-48`, which the design never uses.
+
+The 44px WCAG target size is likewise kept out of the scale — it is a standards constant, not a design decision — and exposed only as `min-h-touch` / `min-w-touch`.
+
+### The loading button keeps focus
+
+A button that becomes `disabled` while a request is in flight blurs to `<body>` and leaves the tab order, so a keyboard user loses their place on every save. `isLoading` uses `aria-disabled` + a blocked handler instead: focus stays, activation is refused, `aria-busy` announces the state, and the label stays rendered so the button does not resize mid-request.
+
+### `npm run typecheck` can pass on stale state — added `validate:ci`
+
+`tsc --build` is incremental and reported success while `Button.test.tsx` contained five genuine `TS2339` errors; `--force` surfaced them immediately. An incremental gate that can pass on stale build info is not a gate.
+
+Local `validate` stays incremental for speed. `validate:ci` runs `typecheck:ci` (`tsc --build --force`) and is what CI must run.
+
+**Interview framing:** _"My own gate lied to me — the incremental build reported clean while five type errors sat in a file it had decided was up to date. I kept the fast path for the inner loop and made CI run the forced build, because a gate you cannot trust is worse than a slow one."_
+
+### `user-event` v14 must be imported by name under NodeNext
+
+`import userEvent from '@testing-library/user-event'` resolves to the module namespace, not the callable object, so every `userEvent.click` was a `TS2339`. The named export `{ userEvent }` is correct. Recorded because the default import is what almost every tutorial shows.
+
+---
+
 ## Pending
 
 - **B12** — custom auth vs Supabase Auth ([ADR-0005](docs/adr/0005-custom-auth-over-supabase-auth.md)). Reversible until roadmap step 6.

@@ -13,7 +13,24 @@
  *   export default { presets: [renewcredPreset], content: [...] };
  */
 import type { Config } from 'tailwindcss';
-import { border, color, effect, layout, radius, spacing, typography } from './tokens.js';
+import plugin from 'tailwindcss/plugin.js';
+import {
+  border,
+  color,
+  controlHeight,
+  effect,
+  layout,
+  radius,
+  spacing,
+  typography,
+} from './tokens.js';
+
+/**
+ * WCAG 2.5.8 minimum target size. This is a standards constant, not a value the
+ * design chose, so it is deliberately not a spacing step — putting it in the
+ * scale would imply `p-44` and `gap-44` are sanctioned, which they are not.
+ */
+const MIN_TOUCH_TARGET = '44px';
 
 const ROOT_FONT_SIZE = 16;
 
@@ -87,6 +104,21 @@ export const renewcredPreset = {
       width: {
         sidebar: px(layout.docSidebarWidth),
       },
+      // Control heights are not spacing steps — see tokens.ts. Without these,
+      // h-control-* emits nothing and the control collapses to content height.
+      height: mapValues(controlHeight, (v) => px(v)),
+      minHeight: { touch: MIN_TOUCH_TARGET },
+      minWidth: { touch: MIN_TOUCH_TARGET },
     },
   },
+  plugins: [
+    plugin((api) => {
+      // Hover affordances must be gated: on touch devices `:hover` sticks after
+      // a tap, leaving elements permanently in their hover state.
+      api.addVariant('hoverable', '@media (hover: hover)');
+      // Pairs with min-h-touch/min-w-touch to meet the 44px target size on
+      // touch input without altering the desktop design's exact dimensions.
+      api.addVariant('coarse', '@media (any-pointer: coarse)');
+    }),
+  ],
 } satisfies Config;
