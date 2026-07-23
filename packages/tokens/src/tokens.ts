@@ -84,6 +84,12 @@ export const typography = {
     bodyBold: { size: 20, lineHeight: 24, weight: 600 },
     /** nav items, version chips — 34 occurrences */
     label: { size: 16, lineHeight: 24, weight: 500 },
+    /** hero eyebrow chip — 20/23.46, NOT the 20/24 of bodyStrong */
+    chip: { size: 20, lineHeight: 23.46, weight: 500 },
+    /** "Read more" — 20/28.96 and always underlined in the design */
+    link: { size: 20, lineHeight: 28.96, weight: 500 },
+    /** footer address, legal links, "Back to Top" — weight 400, not label's 500 */
+    labelRegular: { size: 16, lineHeight: 24, weight: 400 },
     /** version/status line — "Certified - 12 Jul 2025" */
     meta: { size: 14, lineHeight: 20, weight: 400 },
     /** footer legal — WorkSans-Italic */

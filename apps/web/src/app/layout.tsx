@@ -4,6 +4,7 @@ import { contentRepository } from '@/lib/content';
 import { BackToTop } from '@/components/layout/BackToTop';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { GrainOverlay } from '@/components/layout/GrainOverlay';
 import './globals.css';
 
 /**
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main id="main">{children}</main>
         <SiteFooter primary={footerPrimary} legal={footerLegal} />
         <BackToTop />
+        <GrainOverlay />
       </body>
     </html>
   );

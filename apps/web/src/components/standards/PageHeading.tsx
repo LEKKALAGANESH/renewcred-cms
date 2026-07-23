@@ -17,7 +17,7 @@ export function PageHeading({
 }) {
   return (
     <div className={cn('flex flex-col gap-16', className)}>
-      <span className="flex w-fit items-center gap-8 rounded-2xl border border-DEFAULT bg-surface-card px-16 py-8 text-bodyStrong">
+      <span className="flex w-fit items-center gap-8 rounded-2xl border border-DEFAULT bg-surface-card px-16 py-8 text-chip">
         {eyebrow}
       </span>
       <h1 className="text-display italic text-text-primary">{title}</h1>

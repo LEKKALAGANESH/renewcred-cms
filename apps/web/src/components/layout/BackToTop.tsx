@@ -48,7 +48,7 @@ export function BackToTop() {
           strokeLinejoin="round"
         />
       </svg>
-      <span className="text-label font-400 underline underline-offset-4 [writing-mode:vertical-rl]">
+      <span className="text-labelRegular underline underline-offset-4 [writing-mode:vertical-rl]">
         Back to Top
       </span>
     </button>

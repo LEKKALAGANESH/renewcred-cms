@@ -26,16 +26,16 @@ export function SiteFooter({
           <div className="flex flex-col gap-8">
             <Logo tone="inverse" />
             <address className="flex flex-col gap-8 not-italic">
-              <span className="text-label font-400">Indiranagar, Bengaluru, Karnataka, INDIA</span>
+              <span className="text-labelRegular">Indiranagar, Bengaluru, Karnataka, INDIA</span>
               <a
                 href="mailto:yp@renewcred.com"
-                className="w-fit text-label font-400 underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                className="w-fit text-labelRegular underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
               >
                 yp@renewcred.com
               </a>
             </address>
-            <p className="text-label font-400">There is no time to save the planet</p>
-            <p className="text-label font-400">
+            <p className="text-labelRegular">There is no time to save the planet</p>
+            <p className="text-labelRegular">
               CIN No.: <span className="ml-8">XXXXXXXXX</span>
             </p>
           </div>
@@ -47,7 +47,7 @@ export function SiteFooter({
                   <li key={item.id}>
                     <Link
                       href={item.href}
-                      className="text-label font-400 underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                      className="text-labelRegular underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                     >
                       {item.label}
                     </Link>
