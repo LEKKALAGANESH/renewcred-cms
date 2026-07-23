@@ -65,11 +65,16 @@ export default tseslint.config(
      merges the disable-rules in; spreading the config would clobber them with
      the `rules` block below. */
   {
-    files: ['**/*.config.{js,mjs,cjs,ts}', '**/scripts/**'],
+    files: ['**/*.config.{js,mjs,cjs,ts}', '**/scripts/**', 'figma/*.mjs'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: {
       // Without type information, no-undef has no way to know these exist.
-      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+      },
     },
     rules: { 'no-console': 'off' },
   },
