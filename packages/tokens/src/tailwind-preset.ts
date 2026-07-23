@@ -51,6 +51,19 @@ export const renewcredPreset = {
     spacing: mapValues(spacing, px),
     borderRadius: mapValues(radius, px),
     borderWidth: mapValues(border, px),
+    // Declared separately from `colors` so the common case is bare `border`.
+    // Folding these into `colors` would spell the default stroke
+    // `border-border-default` and also make `bg-border-*` expressible, which is
+    // meaningless — a stroke colour is not a fill.
+    borderColor: {
+      DEFAULT: color.border.default,
+      muted: color.border.muted,
+      /** the outline button's stroke */
+      strong: color.text.primary,
+      brand: color.brand.primary,
+      transparent: 'transparent',
+      current: 'currentColor',
+    },
     fontFamily: {
       sans: [typography.fontFamily, 'system-ui', 'sans-serif'],
     },

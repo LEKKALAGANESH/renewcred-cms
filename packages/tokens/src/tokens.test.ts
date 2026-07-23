@@ -48,6 +48,7 @@ describe('colour tokens match the Figma extract', () => {
     ['text', color.text],
     ['brand', color.brand],
     ['surface', color.surface],
+    ['border', color.border],
   ] as const;
 
   for (const [group, tokens] of groups) {

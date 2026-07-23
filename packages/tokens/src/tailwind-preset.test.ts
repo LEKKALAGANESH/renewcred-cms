@@ -28,6 +28,15 @@ describe('palette', () => {
     expect(theme.colors.transparent).toBe('transparent');
     expect(theme.colors.current).toBe('currentColor');
   });
+
+  it('exposes strokes through borderColor, not through the fill palette', () => {
+    expect(theme.borderColor.DEFAULT).toBe(color.border.default);
+    expect(theme.borderColor.muted).toBe(color.border.muted);
+    // `border-strong` is the outline button; `border-brand` the primary button.
+    expect(theme.borderColor.strong).toBe(color.text.primary);
+    expect(theme.borderColor.brand).toBe(color.brand.primary);
+    expect(Object.keys(theme.colors)).not.toContain('border');
+  });
 });
 
 describe('spacing', () => {

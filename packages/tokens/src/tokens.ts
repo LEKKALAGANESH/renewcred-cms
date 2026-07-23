@@ -25,18 +25,35 @@ export const color = {
     inverse: '#ffffff',
     /** display headings — 16 */
     strong: '#020202',
+    /** footer and sub-menu link text — 15 */
+    link: '#202020',
   },
   brand: {
     /** logo mark, active nav, active TOC item, accents — 47 */
     primary: '#be202e',
     /** brand-tinted surface — 1 */
     tint: '#fcf4f5',
+    /** newsletter text field surface — 5 */
+    tintSoft: '#f8e9ea',
+    /** sub-menu active surface — 6 */
+    tintStrong: '#f1dae0',
   },
   surface: {
     /** page background — 11 */
     page: '#f5f5f5',
     /** cards, nav bar, inputs — 150 */
     card: '#ffffff',
+  },
+  /**
+   * Strokes. Absent from the original extraction, which captured fills only —
+   * `default` is the single most-used colour of any kind in the file at 88
+   * occurrences, so every bordered surface would otherwise have been a guess.
+   */
+  border: {
+    /** cards, inputs, icon buttons, dividers — 88 */
+    default: '#d8d8d8',
+    /** secondary divider — 3 */
+    muted: '#d2d1d1',
   },
 } as const;
 
