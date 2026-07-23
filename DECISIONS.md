@@ -159,6 +159,38 @@ The seed ran under neither of its two documented paths. Type-stripping does not 
 
 ---
 
+## Step 3 — Design tokens · 2026-07-23
+
+### The Tailwind preset **replaces** the default theme rather than extending it
+
+`theme.colors`, `theme.spacing`, `theme.fontSize`, `theme.borderRadius`, and `theme.borderWidth` are overridden, not placed under `extend`.
+
+**Why:** with `extend`, `bg-blue-500` and `p-7` keep working. "No hardcoded colours, no magic spacing" then depends on a reviewer noticing — and reviewers notice the colour, never the `p-7`. Replacing the scales makes an off-token value a class that does not exist, so the failure moves from code review to the build. The extracted palette is nine colours and thirteen spacing steps, so nothing legitimate is lost.
+
+**Trade accepted:** a genuinely new value must be added to the token file rather than typed inline. That friction is the point.
+
+**Interview framing:** _"I made the design system enforce itself. Extending Tailwind's theme leaves every escape hatch open and turns token discipline into a code-review chore; replacing it means an off-token class fails to compile. The constraint is the deliverable."_
+
+### Spacing in px, type in rem
+
+Spacing, radii, and layout are pixel-derived from a 1920 canvas, so they stay px and the layout matches the design exactly. Font sizes and line heights are emitted in **rem** so browser font-size preferences still scale the text (WCAG 1.4.4). Fractional line heights from Figma (37.54, 28.15) are kept exact rather than rounded — they are computed leading from a percentage setting, and rounding them shifts every heading's baseline.
+
+### Tokens are hand-authored, with a test that proves they match the extract
+
+`tokens.ts` is written by hand so it can carry types and the usage notes that explain _why_ a token exists. That reintroduces the risk it was meant to remove — a hand copy can drift from its source — so `tokens.test.ts` asserts every value against `figma/design-tokens.json` and fails the build on any divergence.
+
+**This paid for itself immediately.** The first run failed: `label` had been transcribed as weight 400 where the design uses 500 — the style behind nav items and version chips, 34 occurrences. A wrong font weight is invisible in review and produces a build that looks _almost_ right, which is the hardest class of design bug to find later.
+
+**Interview framing:** _"I wanted typed tokens with intent, which meant hand-writing them, which meant they could drift from the design. So I wrote the test that compares them to the extract. It caught a wrong font weight on the very first run — exactly the defect that ships silently and gets noticed in the design review three weeks later."_
+
+### Shadow alpha came from the node tree, not the token extract
+
+The extract recorded shadow _geometry_ only — radius and offset, no colour. Those tokens would have been incomplete, and the gap is the kind that gets filled with a plausible guess. Re-read from `figma/file.json`: `0 0 4px rgba(0,0,0,.25)` and `0 4px 16px rgba(0,0,0,.16)`.
+
+**Noted for later:** the design also uses a Figma `NOISE` effect (7 occurrences) which has no CSS equivalent. It needs a tiled PNG/SVG overlay at implementation time — recorded now so it is not discovered during the pixel-perfect pass.
+
+---
+
 ## Pending
 
 - **B12** — custom auth vs Supabase Auth ([ADR-0005](docs/adr/0005-custom-auth-over-supabase-auth.md)). Reversible until roadmap step 6.
