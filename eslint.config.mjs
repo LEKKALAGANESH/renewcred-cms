@@ -67,6 +67,10 @@ export default tseslint.config(
   {
     files: ['**/*.config.{js,mjs,cjs,ts}', '**/scripts/**'],
     extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      // Without type information, no-undef has no way to know these exist.
+      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' },
+    },
     rules: { 'no-console': 'off' },
   },
 

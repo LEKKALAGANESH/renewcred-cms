@@ -1,4 +1,8 @@
 {
   "files": [],
-  "references": [{ "path": "./packages/env" }, { "path": "./packages/logger" }]
+  "references": [
+    { "path": "./packages/env" },
+    { "path": "./packages/logger" },
+    { "path": "./packages/schema" }
+  ]
 }
