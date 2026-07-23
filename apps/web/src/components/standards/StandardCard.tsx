@@ -26,7 +26,7 @@ export function StandardCard({ standard }: { standard: StandardSummary }) {
 
         <Link
           href={`/standards/${standard.slug}`}
-          className="shrink-0 rounded-sm text-bodyStrong text-text-secondary underline-offset-4 hoverable:hover:text-brand-primary hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+          className="shrink-0 rounded-sm text-bodyStrong text-text-secondary underline underline-offset-4 hoverable:hover:text-brand-primary hoverable:hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
           {/* Stretched hit area — the row is the target, the text is the name. */}
           <span className="absolute inset-0" aria-hidden="true" />

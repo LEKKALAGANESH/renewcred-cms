@@ -47,9 +47,21 @@ const mapValues = <T, R>(
   Object.fromEntries(Object.entries(source).map(([key, value]) => [key, transform(value)]));
 
 const fontSize = Object.fromEntries(
-  Object.entries(typography.scale).map(([name, { size, lineHeight, weight }]) => [
+  Object.entries(typography.scale).map(([name, scale]) => [
     name,
-    [rem(size), { lineHeight: rem(lineHeight), fontWeight: String(weight) }],
+    [
+      rem(scale.size),
+      {
+        lineHeight: rem(scale.lineHeight),
+        fontWeight: String(scale.weight),
+        // NOTE: Tailwind's fontSize tuple accepts only lineHeight,
+        // letterSpacing and fontWeight. A fontStyle key here is silently
+        // dropped, which is how the display title rendered upright when the
+        // design sets WorkSans-MediumItalic. Italic scales therefore carry the
+        // `italic` utility at the call site, and `italicScales` in tokens.ts
+        // names them so that list cannot drift.
+      },
+    ],
   ])
 ) as Config['theme'] & Record<string, unknown>;
 

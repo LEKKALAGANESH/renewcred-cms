@@ -4,7 +4,8 @@
     "derivation": "Every value below was counted from the node tree. Nothing is invented. Counts are occurrences in the design.",
     "publishedStyles": 0,
     "note": "The file publishes no shared Figma styles, so token NAMES are ours; token VALUES are extracted.",
-    "amendment": "Border colours and three surface tints were absent from the original pass, which captured fills for text and surfaces but no strokes — #d8d8d8 alone occurs 88 times. Added 2026-07-23 by counting the node tree with the same method. Nothing here is invented."
+    "amendment": "Border colours and three surface tints were absent from the original pass, which captured fills for text and surfaces but no strokes — #d8d8d8 alone occurs 88 times. Added 2026-07-23 by counting the node tree with the same method. Nothing here is invented.",
+    "amendment2": "Font STYLE was never captured: the display title is WorkSans-MediumItalic, the newsletter headline and footer legal are WorkSans-Italic, and \"Read more\"/\"Back to Top\" are underlined. Two sizes (14/400, 12/400) were also missing. Added 2026-07-23 from fontPostScriptName and textDecoration in the node tree."
   },
   "color": {
     "text": {
@@ -100,7 +101,8 @@
         "lineHeight": 78,
         "weight": 500,
         "count": 4,
-        "usage": "page title — 'EV', 'RenewCred Standards'"
+        "usage": "page title — 'EV', 'RenewCred Standards'",
+        "italic": true
       },
       "heading": {
         "size": 32,
@@ -114,7 +116,8 @@
         "lineHeight": 28.15,
         "weight": 400,
         "count": 4,
-        "usage": "newsletter headline"
+        "usage": "newsletter headline",
+        "italic": true
       },
       "subheadingLt": {
         "size": 24,
@@ -170,7 +173,7 @@
         "lineHeight": 20,
         "weight": 400,
         "count": 5,
-        "usage": "'Certified - 12 Jul 2025', date ranges"
+        "usage": "version status line — \"Certified - 12 Jul 2025\""
       },
       "legal": {
         "size": 12,
@@ -178,6 +181,20 @@
         "weight": 400,
         "count": 16,
         "usage": "copyright, policy links"
+      },
+      "caption": {
+        "size": 12,
+        "lineHeight": 16,
+        "weight": 400,
+        "italic": true,
+        "count": 16,
+        "usage": "footer legal row — WorkSans-Italic"
+      }
+    },
+    "decoration": {
+      "underline": {
+        "count": 8,
+        "usage": "\"Read more\" (20/500) and \"Back to Top\" (16/400)"
       }
     }
   },

@@ -3,6 +3,7 @@ export {
   color,
   controlHeight,
   effect,
+  italicScales,
   layout,
   radius,
   radiusPanelTop,

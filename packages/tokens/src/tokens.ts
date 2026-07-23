@@ -66,12 +66,12 @@ export const typography = {
   fontFamily: 'Work Sans',
   weights: [300, 400, 500, 600],
   scale: {
-    /** page title — "EV", "RenewCred Standards" */
-    display: { size: 72, lineHeight: 78, weight: 500 },
+    /** page title — "EV", "RenewCred Standards". WorkSans-MediumItalic. */
+    display: { size: 72, lineHeight: 78, weight: 500, italic: true },
     /** numbered section headings — "1.0 Introduction" */
     heading: { size: 32, lineHeight: 37.54, weight: 500 },
-    /** newsletter headline */
-    subheadingLg: { size: 24, lineHeight: 28.15, weight: 400 },
+    /** newsletter headline — WorkSans-Italic */
+    subheadingLg: { size: 24, lineHeight: 28.15, weight: 400, italic: true },
     /** newsletter input text */
     subheadingLt: { size: 24, lineHeight: 28.15, weight: 300 },
     /** primary body paragraph — the most-used style in the file, 56 occurrences */
@@ -84,6 +84,10 @@ export const typography = {
     bodyBold: { size: 20, lineHeight: 24, weight: 600 },
     /** nav items, version chips — 34 occurrences */
     label: { size: 16, lineHeight: 24, weight: 500 },
+    /** version/status line — "Certified - 12 Jul 2025" */
+    meta: { size: 14, lineHeight: 20, weight: 400 },
+    /** footer legal — WorkSans-Italic */
+    caption: { size: 12, lineHeight: 16, weight: 400, italic: true },
   },
 } as const;
 
@@ -168,6 +172,12 @@ export const layout = {
   docSidebarWidth: 292,
   docContentWidth: 842,
 } as const;
+
+/**
+ * Scales the design sets in italic. Tailwind's fontSize tuple cannot express
+ * font-style, so these require the  utility alongside the size class.
+ */
+export const italicScales = ['display', 'subheadingLg', 'caption'] as const;
 
 export type ColorTokens = typeof color;
 export type SpacingToken = keyof typeof spacing;

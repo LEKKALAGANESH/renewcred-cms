@@ -63,15 +63,13 @@ export function SiteFooter({
         <hr className="my-40 border-0 border-t border-t-surface-card" />
 
         <div className="flex flex-wrap items-center justify-between gap-24">
-          <p className="text-[12px] leading-[16px]">
-            Copyright © 2025 Renewred. All rights reserved.
-          </p>
+          <p className="text-caption italic">Copyright © 2025 Renewred. All rights reserved.</p>
           <ul className="flex items-center gap-24">
             {legal.map((item) => (
               <li key={item.id}>
                 <Link
                   href={item.href}
-                  className="text-[12px] leading-[16px] underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  className="text-caption italic underline-offset-4 hoverable:hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                 >
                   {item.label}
                 </Link>
