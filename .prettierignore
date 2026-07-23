@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.next/
+coverage/
+**/generated/
+
+# Extracted design data — machine-generated, reformatting creates noise.
+figma/file.json
+figma/styles.json
+figma/frames.json
+
+# Prisma has its own formatter (`prisma format`).
+**/*.prisma
+
+package-lock.json

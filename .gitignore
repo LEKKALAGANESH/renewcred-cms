@@ -1,0 +1,59 @@
+# --- Secrets -------------------------------------------------------------
+# Nothing matching .env may ever be committed. .env.example is the only
+# exception and holds placeholders only.
+.env
+.env.*
+!.env.example
+*.local
+figma/.env.figma.local
+
+# --- Dependencies --------------------------------------------------------
+node_modules/
+.pnpm-store/
+
+# --- Build output --------------------------------------------------------
+dist/
+build/
+out/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# --- Prisma --------------------------------------------------------------
+# Generated client only — migrations ARE committed.
+**/generated/
+prisma/*.db
+prisma/*.db-journal
+
+# --- Supabase ------------------------------------------------------------
+# Local stack runtime state. supabase/config.toml and supabase/migrations ARE committed.
+supabase/.branches/
+supabase/.temp/
+
+# --- Test / coverage -----------------------------------------------------
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# --- Figma extraction ----------------------------------------------------
+# file.json is 4.3 MB of design data and renders are ~7 MB each. Both are
+# reproducible via `node figma/pull.mjs`, so they stay out of git history.
+# design-tokens.json IS committed — it is the distilled, reviewed artifact.
+figma/file.json
+figma/styles.json
+figma/frames/
+
+# --- Editor / OS ---------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ----------------------------------------------------------------
+*.log
+npm-debug.log*
+logs/

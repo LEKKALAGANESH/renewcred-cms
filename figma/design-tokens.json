@@ -1,0 +1,191 @@
+{
+  "_meta": {
+    "source": "figma/file.json — Tech Interview _ Frontend engineer (Copy)",
+    "derivation": "Every value below was counted from the node tree. Nothing is invented. Counts are occurrences in the design.",
+    "publishedStyles": 0,
+    "note": "The file publishes no shared Figma styles, so token NAMES are ours; token VALUES are extracted."
+  },
+
+  "color": {
+    "text": {
+      "primary": { "value": "#2b2c2c", "count": 167, "usage": "body copy, headings" },
+      "secondary": { "value": "#505050", "count": 57, "usage": "supporting copy, TOC inactive" },
+      "muted": { "value": "#9f9f9f", "count": 4, "usage": "input placeholder, meta" },
+      "inverse": { "value": "#ffffff", "count": 150, "usage": "text on dark/brand surfaces" },
+      "strong": { "value": "#020202", "count": 16, "usage": "display headings" }
+    },
+    "brand": {
+      "primary": {
+        "value": "#be202e",
+        "count": 47,
+        "usage": "logo mark, active nav, active TOC item, accents"
+      },
+      "tint": { "value": "#fcf4f5", "count": 1, "usage": "brand-tinted surface" }
+    },
+    "surface": {
+      "page": { "value": "#f5f5f5", "count": 11, "usage": "page background" },
+      "card": { "value": "#ffffff", "count": 150, "usage": "cards, nav bar, inputs" },
+      "shadow": { "value": "#000000", "count": 3, "usage": "shadow colour only, always with alpha" }
+    }
+  },
+
+  "typography": {
+    "fontFamily": "Work Sans",
+    "weights": [300, 400, 500, 600],
+    "scale": {
+      "display": {
+        "size": 72,
+        "lineHeight": 78,
+        "weight": 500,
+        "count": 4,
+        "usage": "page title — 'EV', 'RenewCred Standards'"
+      },
+      "heading": {
+        "size": 32,
+        "lineHeight": 37.54,
+        "weight": 500,
+        "count": 28,
+        "usage": "numbered section headings — '1.0 Introduction'"
+      },
+      "subheadingLg": {
+        "size": 24,
+        "lineHeight": 28.15,
+        "weight": 400,
+        "count": 4,
+        "usage": "newsletter headline"
+      },
+      "subheadingLt": {
+        "size": 24,
+        "lineHeight": 28.15,
+        "weight": 300,
+        "count": 4,
+        "usage": "newsletter input text"
+      },
+      "body": {
+        "size": 20,
+        "lineHeight": 28,
+        "weight": 400,
+        "count": 56,
+        "usage": "primary body paragraph — most used style in the file"
+      },
+      "bodyCompact": {
+        "size": 20,
+        "lineHeight": 24,
+        "weight": 400,
+        "count": 36,
+        "usage": "table-of-contents entries"
+      },
+      "bodyStrong": {
+        "size": 20,
+        "lineHeight": 24,
+        "weight": 500,
+        "count": 16,
+        "usage": "'Read more', 'Version', version label"
+      },
+      "bodyBold": {
+        "size": 20,
+        "lineHeight": 24,
+        "weight": 600,
+        "count": 4,
+        "usage": "'Subscribe'"
+      },
+      "label": {
+        "size": 16,
+        "lineHeight": 24,
+        "weight": 500,
+        "count": 34,
+        "usage": "nav items, version chips"
+      },
+      "labelRegular": {
+        "size": 16,
+        "lineHeight": 24,
+        "weight": 400,
+        "count": 48,
+        "usage": "footer links, address"
+      },
+      "meta": {
+        "size": 14,
+        "lineHeight": 20,
+        "weight": 400,
+        "count": 5,
+        "usage": "'Certified - 12 Jul 2025', date ranges"
+      },
+      "legal": {
+        "size": 12,
+        "lineHeight": 16,
+        "weight": 400,
+        "count": 16,
+        "usage": "copyright, policy links"
+      }
+    }
+  },
+
+  "spacing": {
+    "_base": 4,
+    "_note": "Clean 4px scale. Counts are auto-layout gap + padding occurrences.",
+    "scale": {
+      "2": { "value": 2, "count": 7 },
+      "4": { "value": 4, "count": 26 },
+      "8": { "value": 8, "count": 378 },
+      "12": { "value": 12, "count": 105 },
+      "14": { "value": 14, "count": 30 },
+      "16": { "value": 16, "count": 164 },
+      "20": { "value": 20, "count": 8 },
+      "24": { "value": 24, "count": 157 },
+      "40": { "value": 40, "count": 15 },
+      "64": { "value": 64, "count": 4 },
+      "80": { "value": 80, "count": 21 },
+      "104": { "value": 104, "count": 12 },
+      "160": { "value": 160, "count": 11 }
+    }
+  },
+
+  "radius": {
+    "sm": { "value": 4, "count": 3 },
+    "md": { "value": 8, "count": 7 },
+    "lg": { "value": 16, "count": 8 },
+    "xl": { "value": 40, "count": 12 },
+    "2xl": { "value": 48, "count": 4 },
+    "pill": { "value": 50, "count": 15, "usage": "search field, 'Standards' chip, buttons" },
+    "panelTop": { "value": [80, 80, 0, 0], "count": 4, "usage": "top-rounded panel" }
+  },
+
+  "border": {
+    "hairline": { "value": 1, "count": 955 },
+    "medium": { "value": 1.5, "count": 142 }
+  },
+
+  "effect": {
+    "shadowSm": { "type": "DROP_SHADOW", "radius": 4, "offset": { "x": 0, "y": 0 }, "count": 4 },
+    "shadowMd": { "type": "DROP_SHADOW", "radius": 16, "offset": { "x": 0, "y": 4 }, "count": 3 },
+    "backdropBlur": {
+      "type": "BACKGROUND_BLUR",
+      "radius": 40,
+      "count": 4,
+      "usage": "sticky nav bar"
+    },
+    "noise": {
+      "type": "NOISE",
+      "count": 7,
+      "usage": "decorative grain — not reproducible in CSS; use a tiled PNG/SVG overlay"
+    }
+  },
+
+  "layout": {
+    "designWidth": 1920,
+    "contentMaxWidth": 1712,
+    "gutter": 104,
+    "docSidebarWidth": 292,
+    "docContentWidth": 842,
+    "pageHeights": { "standardsList": 2383, "standardDetail": 3349 }
+  },
+
+  "components": {
+    "_note": "Component instances found in the tree. Low count confirms the design leans on raw frames rather than a published component library.",
+    "Arrows": 15,
+    "Btn": 4,
+    "Component 2": 4,
+    "Frame 34852": 4,
+    "sidebar_icons": 1
+  }
+}
