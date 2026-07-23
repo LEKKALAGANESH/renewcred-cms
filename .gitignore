@@ -64,3 +64,6 @@ logs/
 
 # Exported SVG assets — reproducible via `node figma/pull-assets.mjs`
 figma/assets/
+
+# Figma file fetched with ?geometry=paths — large, reproducible
+figma/file-geometry.json
