@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* The design's numbered sections rely on anchors; offset so a jumped-to
+       heading is not hidden behind the sticky header. */
+    scroll-padding-top: 138px;
+  }
+
+  body {
+    @apply bg-surface-page font-sans text-body text-text-primary antialiased;
+  }
+
+  /* Motion is opt-in: authored motionless, enhanced only when welcome. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}

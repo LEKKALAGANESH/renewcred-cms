@@ -57,3 +57,7 @@ desktop.ini
 *.log
 npm-debug.log*
 logs/
+
+# Playwright MCP artefacts
+.playwright-mcp/
+*.png

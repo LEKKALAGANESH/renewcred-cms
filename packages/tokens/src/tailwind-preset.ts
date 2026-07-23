@@ -67,7 +67,10 @@ export const renewcredPreset = {
     },
     spacing: mapValues(spacing, px),
     borderRadius: mapValues(radius, px),
-    borderWidth: mapValues(border, px),
+    // DEFAULT is required or the bare `border` utility does not exist and every
+    // stroke in the app silently disappears. 1px is the design's own default at
+    // 955 occurrences, so this is the extracted hairline, not an invention.
+    borderWidth: { DEFAULT: px(border.hairline), ...mapValues(border, px) },
     // Declared separately from `colors` so the common case is bare `border`.
     // Folding these into `colors` would spell the default stroke
     // `border-border-default` and also make `bg-border-*` expressible, which is
