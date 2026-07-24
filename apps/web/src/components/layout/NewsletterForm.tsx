@@ -49,7 +49,7 @@ export function NewsletterForm() {
 
   if (status.kind === 'success') {
     return (
-      <div className="flex max-w-[518px] flex-col gap-16 p-8" role="status">
+      <div className="flex w-full max-w-[518px] flex-col gap-16 p-8" role="status">
         <p className="text-subheadingLg italic">Thanks — you are subscribed.</p>
         <p className="text-label font-400 text-surface-page">
           🔒 No spam. Just pure climate intelligence.
@@ -59,7 +59,11 @@ export function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex max-w-[518px] flex-col gap-24 p-8">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="flex w-full max-w-[518px] flex-col gap-24 p-8"
+    >
       <p className="text-subheadingLg italic">🔒 No spam. Just pure climate intelligence.</p>
 
       <div className="flex flex-col gap-8">

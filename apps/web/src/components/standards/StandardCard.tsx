@@ -15,7 +15,7 @@ import type { StandardSummary } from '@/lib/content';
 export function StandardCard({ standard }: { standard: StandardSummary }) {
   return (
     <article className="relative flex flex-col gap-16 px-8 py-24 transition-colors hoverable:hover:bg-surface-card/60 focus-within:bg-surface-card/60">
-      <div className="flex items-center gap-24">
+      <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:gap-24">
         <h2 className="flex flex-1 items-center gap-8 text-heading text-text-primary">
           <span
             aria-hidden="true"

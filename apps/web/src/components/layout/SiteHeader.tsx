@@ -14,24 +14,38 @@ import { Logo } from './Logo';
  * with 24px of vertical padding. The bar itself is 1712 wide with the logo left,
  * links centred, and the outline "Registry" button right.
  *
- * The submenu is the design's third frame variant — 320 wide, r8, white — and is
- * a real menu here: it opens on hover *and* focus, closes on Escape and on
- * outside click, and every item is reachable by keyboard. Hover-only would make
- * the Standards list unreachable without a pointer.
+ * Below `lg` the centred links and Registry button would overflow the bar and
+ * force a horizontal page scroll, so they collapse behind a menu button into a
+ * flat, tap-and-keyboard reachable sheet. The desktop submenu is the design's
+ * third frame variant — 320 wide, r8, white — a real menu here: it opens on
+ * hover *and* focus, closes on Escape and outside click, every item reachable by
+ * keyboard. Hover-only would make the Standards list unreachable without a pointer.
  */
 export function SiteHeader({ items }: { items: NavigationItem[] }) {
   const pathname = usePathname();
   const [openId, setOpenId] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuId = useId();
+
+  const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
-    if (openId === null) return;
+    if (openId === null && !mobileOpen) return;
 
     const onPointerDown = (event: MouseEvent) => {
-      if (!navRef.current?.contains(event.target as Node)) setOpenId(null);
+      if (!navRef.current?.contains(event.target as Node)) {
+        setOpenId(null);
+        setMobileOpen(false);
+      }
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenId(null);
+      if (event.key !== 'Escape') return;
+      // Escape from the mobile sheet returns focus to the button that opened it.
+      if (mobileOpen) mobileToggleRef.current?.focus();
+      setOpenId(null);
+      setMobileOpen(false);
     };
     document.addEventListener('mousedown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
@@ -39,18 +53,21 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
       document.removeEventListener('mousedown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [openId]);
+  }, [openId, mobileOpen]);
 
-  // Navigating away must dismiss the menu; otherwise it survives the route change.
-  useEffect(() => setOpenId(null), [pathname]);
+  // Navigating away must dismiss both menus; otherwise they survive the route change.
+  useEffect(() => {
+    setOpenId(null);
+    setMobileOpen(false);
+  }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-30 px-80 py-24">
+    <header className="sticky top-0 z-30 px-16 py-16 lg:px-80 lg:py-24">
       <nav
         ref={navRef}
         aria-label="Primary"
         className={cn(
-          'mx-auto flex h-[90px] max-w-content items-center justify-between gap-8 rounded-lg px-24',
+          'relative mx-auto flex h-[90px] max-w-content items-center justify-between gap-8 rounded-lg px-24',
           'border border-DEFAULT bg-surface-card',
           // The design blurs what passes behind the bar.
           'supports-[backdrop-filter:blur(0px)]:bg-surface-card/90 supports-[backdrop-filter:blur(0px)]:backdrop-blur-nav'
@@ -64,21 +81,92 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           <span className="sr-only">RenewCred home</span>
         </Link>
 
-        <ul className="flex items-center">
+        {/* Desktop navigation — the hover dropdowns only make sense with a pointer. */}
+        <ul className="hidden items-center lg:flex">
           {items.map((item) => (
             <NavEntry
               key={item.id}
               item={item}
               isOpen={openId === item.id}
               onOpenChange={(open) => setOpenId(open ? item.id : null)}
-              isCurrent={pathname === item.href || pathname.startsWith(`${item.href}/`)}
+              isCurrent={isCurrent(item.href)}
             />
           ))}
         </ul>
 
-        <Button variant="outline" className="shrink-0">
-          Registry
-        </Button>
+        <div className="hidden lg:block">
+          <Button variant="outline" className="shrink-0">
+            Registry
+          </Button>
+        </div>
+
+        {/* Mobile trigger — below lg the row is just logo + this button. */}
+        <button
+          ref={mobileToggleRef}
+          type="button"
+          aria-expanded={mobileOpen}
+          aria-controls={mobileMenuId}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMobileOpen((open) => !open)}
+          className="inline-flex min-h-touch min-w-touch items-center justify-center rounded-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary lg:hidden"
+        >
+          {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
+
+        {/* Mobile sheet — flattened (no hover), every item and sub-item reachable
+            by tap and keyboard. Scrolls within its own height on short/landscape
+            viewports rather than pushing the page. */}
+        <div
+          id={mobileMenuId}
+          hidden={!mobileOpen}
+          className={cn(
+            'absolute left-0 right-0 top-[calc(100%+8px)] lg:hidden',
+            'max-h-[calc(100dvh-140px)] overflow-y-auto overscroll-contain',
+            'rounded-md border border-DEFAULT bg-surface-card p-16 shadow-md'
+          )}
+        >
+          <ul className="flex flex-col gap-4">
+            {items.map((item) => (
+              <li key={item.id}>
+                <Link
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  className={cn(
+                    'block rounded-sm px-16 py-16 text-label',
+                    'hoverable:hover:bg-brand-tintStrong focus-visible:bg-brand-tintStrong focus-visible:outline-none',
+                    isCurrent(item.href) ? 'text-brand-primary' : 'text-text-primary'
+                  )}
+                >
+                  {item.label}
+                </Link>
+                {item.children.length > 0 && (
+                  <ul className="flex flex-col gap-4 pl-16">
+                    {item.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={child.href}
+                          aria-current={isCurrent(child.href) ? 'page' : undefined}
+                          className={cn(
+                            'block rounded-sm px-16 py-16 text-labelRegular',
+                            'hoverable:hover:bg-brand-tintStrong focus-visible:bg-brand-tintStrong focus-visible:outline-none',
+                            isCurrent(child.href) ? 'text-brand-primary' : 'text-text-primary'
+                          )}
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-16">
+            <Button variant="outline" className="w-full">
+              Registry
+            </Button>
+          </div>
+        </div>
       </nav>
     </header>
   );
@@ -193,6 +281,32 @@ function Caret({ className }: { className?: string }) {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M4 7h16M4 12h16M4 17h16"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 6l12 12M18 6L6 18"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

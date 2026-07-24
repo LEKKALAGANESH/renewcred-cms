@@ -25,7 +25,7 @@ export default async function StandardsPage() {
   const standards = await contentRepository.listStandards();
 
   return (
-    <div className="mx-auto flex max-w-content flex-col gap-80 px-104 pt-80">
+    <div className="mx-auto flex max-w-content flex-col gap-80 px-24 lg:px-104 pt-80">
       <PageHeading eyebrow="Standards" title="RenewCred Standards" lead={LEAD} />
 
       {standards.length === 0 ? (

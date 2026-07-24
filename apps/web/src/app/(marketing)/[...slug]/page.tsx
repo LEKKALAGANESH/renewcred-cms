@@ -28,8 +28,13 @@ export default async function MarketingPlaceholder({
   const title = TITLES[key] ?? 'Coming soon';
 
   return (
-    <div className="mx-auto max-w-content px-104 py-160">
-      <h1 className="pb-40 text-display text-text-primary">{title}</h1>
+    <div className="mx-auto max-w-content px-24 lg:px-104 py-160">
+      {/* Fluid display: exact 72px desktop, scales down so it never overflows a
+          phone. Italic matches the WorkSans-MediumItalic display token, keeping
+          this hero consistent with the standards pages. */}
+      <h1 className="pb-40 text-[clamp(2.5rem,7vw,4.5rem)] font-500 italic leading-[1.0833] text-text-primary">
+        {title}
+      </h1>
       <EmptyState
         title="This section is not part of the standards library"
         description="The supplied design covers the standards index and the standard detail view. This page exists so the navigation stays whole."

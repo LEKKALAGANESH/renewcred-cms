@@ -17,7 +17,7 @@ export default function StandardsError({
   }, [error]);
 
   return (
-    <div className="mx-auto max-w-content px-104 py-160">
+    <div className="mx-auto max-w-content px-24 lg:px-104 py-160">
       <ErrorState
         description="The standards list could not be loaded. This is usually temporary."
         onRetry={reset}

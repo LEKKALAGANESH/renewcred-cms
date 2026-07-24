@@ -20,9 +20,9 @@ export function SiteFooter({
   const columns = [primary.slice(0, half), primary.slice(half)];
 
   return (
-    <footer className="mt-160 rounded-t-[80px] bg-text-primary px-104 pb-40 pt-80 text-text-inverse">
+    <footer className="mt-80 rounded-t-[40px] bg-text-primary px-24 pb-40 pt-64 text-text-inverse lg:mt-160 lg:rounded-t-[80px] lg:px-104 lg:pt-80">
       <div className="mx-auto max-w-content">
-        <div className="flex flex-wrap items-start justify-between gap-64">
+        <div className="flex flex-col gap-40 lg:flex-row lg:flex-wrap lg:items-start lg:justify-between lg:gap-64">
           <div className="flex flex-col gap-8">
             <Logo tone="inverse" />
             <address className="flex flex-col gap-8 not-italic">
@@ -40,7 +40,7 @@ export function SiteFooter({
             </p>
           </div>
 
-          <nav aria-label="Footer" className="flex gap-104">
+          <nav aria-label="Footer" className="flex flex-wrap gap-40 lg:gap-104">
             {columns.map((column, index) => (
               <ul key={index} className="flex flex-col gap-16">
                 {column.map((item) => (

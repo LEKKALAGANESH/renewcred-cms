@@ -45,11 +45,11 @@ export default async function StandardDetailPage({ params, searchParams }: PageP
   const hasContent = standard.content.sections.length > 0;
 
   return (
-    <div className="mx-auto flex max-w-content flex-col gap-80 px-104 pt-80">
+    <div className="mx-auto flex max-w-content flex-col gap-80 px-24 lg:px-104 pt-80">
       <PageHeading eyebrow="Standards" title={standard.title} lead={standard.summary} />
 
-      <div className="flex items-start gap-80">
-        <aside className="sticky top-[160px] flex max-h-[calc(100vh-200px)] w-[312px] shrink-0 flex-col gap-24 overflow-y-auto overscroll-contain pb-24">
+      <div className="flex flex-col gap-40 lg:flex-row lg:items-start lg:gap-80">
+        <aside className="flex w-full flex-col gap-24 pb-24 lg:sticky lg:top-[160px] lg:max-h-[calc(100vh-200px)] lg:w-[312px] lg:shrink-0 lg:overflow-y-auto lg:overscroll-contain">
           <DocumentSearch slug={slug} />
           <VersionPanel slug={slug} current={standard.version} versions={standard.versions} />
           <TableOfContents entries={toc} />
