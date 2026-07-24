@@ -81,8 +81,10 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           <span className="sr-only">RenewCred home</span>
         </Link>
 
-        {/* Desktop navigation — the hover dropdowns only make sense with a pointer. */}
-        <ul className="hidden items-center lg:flex">
+        {/* Desktop navigation. Collapses at xl, not lg: the six links + logo +
+            Registry need ~1280px to sit in the bar without the Registry button
+            spilling off the right edge (measured: overflows through ~1265px). */}
+        <ul className="hidden items-center xl:flex">
           {items.map((item) => (
             <NavEntry
               key={item.id}
@@ -94,7 +96,7 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           ))}
         </ul>
 
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <Button variant="outline" className="shrink-0">
             Registry
           </Button>
@@ -108,7 +110,7 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           aria-controls={mobileMenuId}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           onClick={() => setMobileOpen((open) => !open)}
-          className="inline-flex min-h-touch min-w-touch items-center justify-center rounded-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary lg:hidden"
+          className="inline-flex min-h-touch min-w-touch items-center justify-center rounded-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary xl:hidden"
         >
           {mobileOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
@@ -120,7 +122,9 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           id={mobileMenuId}
           hidden={!mobileOpen}
           className={cn(
-            'absolute left-0 right-0 top-[calc(100%+8px)] lg:hidden',
+            // Full-width on phones, a capped dropdown anchored under the button
+            // from the point the bar has room for it.
+            'absolute right-0 top-[calc(100%+8px)] w-full max-w-[360px] xl:hidden',
             'max-h-[calc(100dvh-140px)] overflow-y-auto overscroll-contain',
             'rounded-md border border-DEFAULT bg-surface-card p-16 shadow-md'
           )}
