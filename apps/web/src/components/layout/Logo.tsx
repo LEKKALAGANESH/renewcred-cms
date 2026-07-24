@@ -18,7 +18,7 @@ const VARIANT = {
 export function Logo({
   tone = 'ink',
   alt = 'RenewCred',
-  className = 'h-10 w-auto',
+  className = 'h-[40px] w-auto',
 }: {
   tone?: 'ink' | 'inverse';
   alt?: string;

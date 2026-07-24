@@ -23,7 +23,7 @@ export function SiteFooter({
     <footer className="mt-80 rounded-t-[40px] bg-text-primary px-24 pb-40 pt-64 text-text-inverse lg:mt-160 lg:rounded-t-[80px] lg:px-104 lg:pt-80">
       <div className="mx-auto max-w-content">
         <div className="flex flex-col gap-40 lg:flex-row lg:flex-wrap lg:items-start lg:justify-between lg:gap-64">
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col items-start gap-8">
             <Logo tone="inverse" />
             <address className="flex flex-col gap-8 not-italic">
               <span className="text-labelRegular">Indiranagar, Bengaluru, Karnataka, INDIA</span>

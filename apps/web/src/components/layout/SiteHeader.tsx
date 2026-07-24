@@ -96,10 +96,8 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           ))}
         </ul>
 
-        <div className="hidden xl:block">
-          <Button variant="outline" className="shrink-0">
-            Registry
-          </Button>
+        <div className="hidden shrink-0 xl:block">
+          <Button variant="outline">Registry</Button>
         </div>
 
         {/* Mobile trigger — below lg the row is just logo + this button. */}
@@ -188,6 +186,7 @@ function NavEntry({
   isCurrent: boolean;
 }) {
   const menuId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const hasChildren = item.children.length > 0;
   const closeTimer = useRef<ReturnType<typeof setTimeout>>();
 
@@ -230,8 +229,19 @@ function NavEntry({
   }
 
   return (
-    <li className="relative" onMouseEnter={openNow} onMouseLeave={closeSoon}>
+    <li
+      className="relative"
+      onMouseEnter={openNow}
+      onMouseLeave={closeSoon}
+      onKeyDown={(event) => {
+        // The global handler clears the open state on Escape; restore focus to
+        // the trigger so a keyboard user inside the (now hidden) panel is not
+        // dropped onto <body> (WCAG 2.4.3).
+        if (event.key === 'Escape' && isOpen) triggerRef.current?.focus();
+      }}
+    >
       <button
+        ref={triggerRef}
         type="button"
         aria-expanded={isOpen}
         aria-controls={menuId}
