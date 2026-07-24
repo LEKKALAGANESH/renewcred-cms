@@ -2,13 +2,13 @@
 
 Running log kept **during** development, not reconstructed at the end. The brief requires "a brief explanation of the architectural decisions you made" at submission; this file is that deliverable.
 
-Structural decisions expensive to reverse get a full ADR in [`docs/adr/`](docs/adr/). This file holds the running narrative, including smaller calls that do not warrant an ADR — and the interview framing for each.
+Structural decisions expensive to reverse get a full ADR in [`docs/adr/`](adr/). This file holds the running narrative, including smaller calls that do not warrant an ADR — and the interview framing for each.
 
 ---
 
 ## Step 0 — Foundation · 2026-07-23
 
-### Monorepo on npm workspaces → [ADR-0001](docs/adr/0001-monorepo-npm-workspaces.md)
+### Monorepo on npm workspaces → [ADR-0001](adr/0001-monorepo-npm-workspaces.md)
 
 **Trade accepted:** npm hoisting permits phantom dependencies that pnpm would prevent. Taken knowingly to keep a cold-clone reviewer at `npm install` with no global prerequisite.
 
@@ -32,7 +32,7 @@ Enabled `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noUnusedLocal
 
 **Note:** `console.log` is a warning, not an error — bootstrap paths run before the logger exists. `console.warn`/`console.error` stay allowed.
 
-### Structured logging with central redaction → [ADR-0007](docs/adr/0007-logging-strategy.md)
+### Structured logging with central redaction → [ADR-0007](adr/0007-logging-strategy.md)
 
 **Trade accepted:** the redaction path list needs maintaining; a newly-added secret-bearing field logs in the clear until it is listed.
 
@@ -68,7 +68,7 @@ Not the `service_role` key, and not a publishable/`anon` key either. Express is 
 
 **Why:** the usual advice is "use the anon key in the browser, never service_role." That is correct advice for a client-direct architecture. This is not one — so the stronger position is available: the safest browser credential is the one that does not exist. It also keeps the brief's requirement intact, since the public site must consume content through the API rather than reaching past it.
 
-### API response envelope → [`docs/API_CONVENTIONS.md`](docs/API_CONVENTIONS.md)
+### API response envelope → [`docs/API_CONVENTIONS.md`](API_CONVENTIONS.md)
 
 Adopted `{ success, data, meta, error }` on the wire, modelled in TypeScript as a **discriminated union on `success`** rather than a flat object with optional fields.
 
@@ -235,6 +235,6 @@ Local `validate` stays incremental for speed. `validate:ci` runs `typecheck:ci` 
 
 ## Pending
 
-- **B12** — custom auth vs Supabase Auth ([ADR-0005](docs/adr/0005-custom-auth-over-supabase-auth.md)). Reversible until roadmap step 6.
+- **B12** — custom auth vs Supabase Auth ([ADR-0005](adr/0005-custom-auth-over-supabase-auth.md)). Reversible until roadmap step 6.
 - **G2** — admin responsive design has no Figma reference and must be designed.
 - **G3** — empty/loading/error states appear nowhere in the design and must be designed.
