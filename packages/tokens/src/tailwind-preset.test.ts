@@ -90,6 +90,13 @@ describe('radii, shadows, and layout', () => {
     expect(theme.borderRadius.pill).toBe('50px');
   });
 
+  it('exposes border-width 0 and surface stroke colours, or resets/dividers vanish', () => {
+    // `border-0` must be expressible (the extracted border scale has no 0 step).
+    expect(theme.borderWidth['0']).toBe('0px');
+    // Surface colours are valid stroke colours (the footer's white divider).
+    expect(theme.borderColor.surface).toEqual(color.surface);
+  });
+
   it('composes shadows with their extracted alpha', () => {
     expect(theme.boxShadow.sm).toBe('0px 0px 4px rgba(0, 0, 0, 0.25)');
     expect(theme.boxShadow.md).toBe('0px 4px 16px rgba(0, 0, 0, 0.16)');

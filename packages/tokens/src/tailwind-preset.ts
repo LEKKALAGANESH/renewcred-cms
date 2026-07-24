@@ -82,7 +82,10 @@ export const renewcredPreset = {
     // DEFAULT is required or the bare `border` utility does not exist and every
     // stroke in the app silently disappears. 1px is the design's own default at
     // 955 occurrences, so this is the extracted hairline, not an invention.
-    borderWidth: { DEFAULT: px(border.hairline), ...mapValues(border, px) },
+    // `0` here for the same reason it is in spacing: `border-0` is a reset (zero
+    // the other three sides, keep one edge) and the extracted border scale has no
+    // 0 step, so without it the utility generates nothing.
+    borderWidth: { 0: '0px', DEFAULT: px(border.hairline), ...mapValues(border, px) },
     // Declared separately from `colors` so the common case is bare `border`.
     // Folding these into `colors` would spell the default stroke
     // `border-border-default` and also make `bg-border-*` expressible, which is
@@ -93,6 +96,10 @@ export const renewcredPreset = {
       /** the outline button's stroke */
       strong: color.text.primary,
       brand: color.brand.primary,
+      // Surface colours double as divider strokes — e.g. the white hairline that
+      // splits the dark footer (`border-t-surface-card`). Without this the class
+      // resolves to nothing and the rule falls back to the default grey stroke.
+      surface: color.surface,
       transparent: 'transparent',
       current: 'currentColor',
     },
