@@ -116,6 +116,13 @@ export const renewcredPreset = {
       doc: px(layout.docContentWidth),
     },
     extend: {
+      // `0` is a reset, not a design step. Tailwind derives `inset`, `minWidth`,
+      // `padding`, `gap`, etc. from `theme('spacing')`, and the extracted scale
+      // omits 0 — so `min-w-0` (flex shrink), `inset-0`/`top-0` (the grain layer,
+      // card hover fills, the sticky nav's pin), `gap-0` and `p-0` all silently
+      // failed to generate. Adding 0 here rather than in the `spacing` token keeps
+      // the Figma extract pure (and its parity test green) while restoring resets.
+      spacing: { 0: '0px' },
       width: {
         sidebar: px(layout.docSidebarWidth),
       },

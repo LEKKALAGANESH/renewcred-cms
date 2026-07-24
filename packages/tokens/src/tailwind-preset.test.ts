@@ -53,6 +53,14 @@ describe('spacing', () => {
     expect(theme.spacing['7']).toBeUndefined();
     expect(theme.spacing['32']).toBeUndefined();
   });
+
+  it('restores 0 as a reset via extend, not as a spacing step', () => {
+    // 0 is not a design step, so it must not appear in the extract-parity scale...
+    expect(theme.spacing['0']).toBeUndefined();
+    // ...but it must be expressible, or min-w-0, inset-0, top-0, gap-0 and p-0 all
+    // silently fail to generate (Tailwind derives inset/minWidth/etc. from spacing).
+    expect(theme.extend.spacing).toMatchObject({ 0: '0px' });
+  });
 });
 
 describe('typography', () => {
