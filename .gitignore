@@ -67,3 +67,6 @@ figma/assets/
 
 # Figma file fetched with ?geometry=paths — large, reproducible
 figma/file-geometry.json
+
+# Generated walkthrough video (reproducible via the recorder; too large for git)
+renewcred-walkthrough.mp4

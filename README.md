@@ -6,6 +6,44 @@ A block-based content management system for standards documentation, with an aut
 
 ---
 
+## Walkthrough
+
+The public site (`apps/web`) built with `next build` and captured from the running
+production server. A full narrated video walkthrough and a route-by-route coverage
+report are in [`WALKTHROUGH_COVERAGE.md`](WALKTHROUGH_COVERAGE.md).
+
+### Standards index & primary navigation
+
+| Standards index (`/standards`)                              | Hover/focus dropdown menu                                    |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| ![Standards index](docs/screenshots/01-standards-index.png) | ![Navigation dropdown](docs/screenshots/07-nav-dropdown.png) |
+
+### Standard detail — sticky sidebar (search · version · TOC) with math, tables & lists
+
+| Detail — sidebar + document                                    | Document body — equation & nested lists                                |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| ![Standard detail](docs/screenshots/02-standard-detail-ev.png) | ![Document body with math](docs/screenshots/03-document-body-math.png) |
+
+### States — empty, coming-soon, 404
+
+| Unpublished standard (empty state)                        | Marketing catch-all                                     | Not found (404)                           |
+| --------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------- |
+| ![Empty standard](docs/screenshots/04-empty-standard.png) | ![Coming soon](docs/screenshots/05-marketing-empty.png) | ![404](docs/screenshots/06-not-found.png) |
+
+### Newsletter — client-side validation → success
+
+| Footer + newsletter form                                            | Success state                                                     |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| ![Footer and newsletter](docs/screenshots/08-footer-newsletter.png) | ![Newsletter success](docs/screenshots/09-newsletter-success.png) |
+
+### Responsive (mobile 390px)
+
+| Mobile menu (full-width sheet)                      | Mobile index (single column)                          |
+| --------------------------------------------------- | ----------------------------------------------------- |
+| ![Mobile menu](docs/screenshots/10-mobile-menu.png) | ![Mobile index](docs/screenshots/11-mobile-index.png) |
+
+---
+
 ## Quick start
 
 **Prerequisites:** Node ≥ 20, Docker, [Supabase CLI](https://supabase.com/docs/guides/local-development)
