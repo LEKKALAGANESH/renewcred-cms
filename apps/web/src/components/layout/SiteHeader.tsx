@@ -60,7 +60,7 @@ export function SiteHeader({ items }: { items: NavigationItem[] }) {
           href="/"
           className="shrink-0 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
         >
-          <Logo />
+          <Logo alt="" />
           <span className="sr-only">RenewCred home</span>
         </Link>
 
